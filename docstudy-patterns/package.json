@@ -1,0 +1,15 @@
+{
+  "name": "docstudy-gof-patterns",
+  "version": "1.0.0",
+  "description": "Implementação dos padrões GoF (Strategy, Observer, Factory Method) aplicados ao Docstudy",
+  "type": "module",
+  "main": "src/main.ts",
+  "scripts": {
+    "start": "npx tsx src/main.ts",
+    "dev": "npx tsx --watch src/main.ts"
+  },
+  "devDependencies": {
+    "tsx": "^4.19.2",
+    "typescript": "^5.8.3"
+  }
+}
