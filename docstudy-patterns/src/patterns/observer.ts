@@ -1,17 +1,3 @@
-// ============================================================
-// Padrão GoF: OBSERVER
-// Problema resolvido: Ao conceder XP, múltiplos módulos precisam
-// reagir (ranking, missões, streak, troféus). Sem Observer, o
-// XPEngine precisaria chamar cada módulo diretamente → alto acoplamento.
-//
-// No Docstudy real, o dashboardStore.ts já esboça este padrão:
-//   const listeners = new Set<() => void>();
-//   export function subscribeDashboard(fn) { listeners.add(fn); ... }
-// Aqui formalizamos com tipagem e eventos de domínio.
-//
-// Referência: https://refactoring.guru/design-patterns/observer
-// ============================================================
-
 import type { MissionKey, UserProfile } from "../types/index.js";
 
 // ── Evento publicado pelo XPEngine ──────────────────────────
@@ -46,7 +32,6 @@ export class XPEventBus {
 }
 
 // ── Observer 1: StreakTracker ────────────────────────────────
-// Atualiza o streak do usuário ao receber XP por qualquer atividade
 export class StreakTrackerObserver implements XPObserver {
   onXPGranted(event: XPGrantedEvent): void {
     const { userId, updatedProfile } = event;
@@ -59,8 +44,6 @@ export class StreakTrackerObserver implements XPObserver {
 }
 
 // ── Observer 2: MissionEngine ────────────────────────────────
-// Verifica se alguma missão diária foi concluída com este XP
-// Espelha a lógica de missions_newly_completed do complete-lesson Edge Function
 export class MissionEngineObserver implements XPObserver {
   private readonly MISSION_LABELS: Record<MissionKey, string> = {
     questions_answered: "Respondeu 25 questões",
@@ -82,8 +65,6 @@ export class MissionEngineObserver implements XPObserver {
 }
 
 // ── Observer 3: RankingModule ────────────────────────────────
-// Atualiza a posição do usuário no ranking semanal
-// Corresponde à view materializada weekly_ranking definida na arquitetura
 export class RankingObserver implements XPObserver {
   onXPGranted(event: XPGrantedEvent): void {
     const { userId, amount, updatedProfile } = event;
@@ -96,8 +77,6 @@ export class RankingObserver implements XPObserver {
 }
 
 // ── Observer 4: TrophyModule ─────────────────────────────────
-// Verifica se algum troféu de streak deve ser desbloqueado
-// Marcos: 7, 30 e 100 dias (conforme RF-08 da especificação)
 export class TrophyObserver implements XPObserver {
   private readonly STREAK_MILESTONES = [7, 30, 100];
 
@@ -113,3 +92,4 @@ export class TrophyObserver implements XPObserver {
     }
   }
 }
+
