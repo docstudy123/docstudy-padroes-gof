@@ -1,12 +1,3 @@
-// ============================================================
-// Padrão GoF: FACTORY METHOD
-// Problema resolvido: Troféus possuem tipos distintos (streak_7,
-// streak_30, streak_100) com atributos diferentes. Instanciar
-// diretamente acopla a criação ao uso e dificulta extensão.
-//
-// Referência: https://refactoring.guru/design-patterns/factory-method
-// ============================================================
-
 // ── Produto: interface Trophy ────────────────────────────────
 export interface Trophy {
   type: string;
@@ -18,8 +9,7 @@ export interface Trophy {
   unlock(userId: string): void;
 }
 
-// ── Produtos concretos ───────────────────────────────────────
-
+// ── Produto concreto 1: Troféu de 7 dias ────────────────────
 export class StreakTrophy7 implements Trophy {
   type = "streak_7";
   title = "Primeira Semana";
@@ -30,10 +20,10 @@ export class StreakTrophy7 implements Trophy {
 
   unlock(userId: string): void {
     console.log(`[TrophyFactory] 🔥 Troféu "${this.title}" desbloqueado para usuário ${userId}`);
-    // Em produção: INSERT INTO user_trophies (user_id, trophy_type, unlocked_at)
   }
 }
 
+// ── Produto concreto 2: Troféu de 30 dias ───────────────────
 export class StreakTrophy30 implements Trophy {
   type = "streak_30";
   title = "Um Mês de Dedicação";
@@ -47,6 +37,7 @@ export class StreakTrophy30 implements Trophy {
   }
 }
 
+// ── Produto concreto 3: Troféu de 100 dias ──────────────────
 export class StreakTrophy100 implements Trophy {
   type = "streak_100";
   title = "Centenário";
@@ -62,10 +53,8 @@ export class StreakTrophy100 implements Trophy {
 
 // ── Creator abstrato ─────────────────────────────────────────
 export abstract class TrophyCreator {
-  // Factory Method — cada subclasse decide qual Trophy criar
   abstract createTrophy(): Trophy;
 
-  // Método de template: cria e desbloqueia
   grantTrophy(userId: string): Trophy {
     const trophy = this.createTrophy();
     trophy.unlock(userId);
@@ -73,19 +62,21 @@ export abstract class TrophyCreator {
   }
 }
 
-// ── Creators concretos ───────────────────────────────────────
+// ── Creator concreto 1 ───────────────────────────────────────
 export class StreakTrophy7Creator extends TrophyCreator {
   createTrophy(): Trophy {
     return new StreakTrophy7();
   }
 }
 
+// ── Creator concreto 2 ───────────────────────────────────────
 export class StreakTrophy30Creator extends TrophyCreator {
   createTrophy(): Trophy {
     return new StreakTrophy30();
   }
 }
 
+// ── Creator concreto 3 ───────────────────────────────────────
 export class StreakTrophy100Creator extends TrophyCreator {
   createTrophy(): Trophy {
     return new StreakTrophy100();
@@ -93,7 +84,6 @@ export class StreakTrophy100Creator extends TrophyCreator {
 }
 
 // ── TrophyFactory: ponto de entrada único ────────────────────
-// Encapsula a seleção do creator com base no streak atual
 export class TrophyFactory {
   private static readonly creators: Map<number, TrophyCreator> = new Map([
     [7, new StreakTrophy7Creator()],
